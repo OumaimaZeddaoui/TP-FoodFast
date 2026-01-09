@@ -1,6 +1,11 @@
 package org.example;
 
+import db.DatabaseConfig;
+
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +22,7 @@ public class Order {
 
     public Order(Customer customer) {
         this.status = OrderStatus.PENDING;
-        this.dishes = new HashMap<Dish, Integer>();
+        this.dishes = new HashMap<>();
         this.customer = customer;
         this.orderDate = LocalDateTime.now();
     }
@@ -35,12 +40,44 @@ public class Order {
         for (Map.Entry<Dish, Integer> entry : dishes.entrySet()) {
             Dish dish = entry.getKey();
             int quantity = entry.getValue();
-            total = total.add(dish.getPrice().multiply(BigDecimal.valueOf(quantity)));
+            total = total.add(
+                    dish.getPrice().multiply(BigDecimal.valueOf(quantity))
+            );
         }
 
         return total;
     }
 
+    // =======================
+    // BONUS – SAUVEGARDE DB
+    // =======================
+    public void saveToDatabase() {
+
+        String sql = """
+            INSERT INTO orders (id, customer_id, status, total_price, order_date)
+            VALUES (?, ?, ?, ?, ?)
+        """;
+
+        try (Connection connection = DatabaseConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, this.id);
+            statement.setString(2, this.customer.getId());
+            statement.setString(3, this.status.name());
+            statement.setBigDecimal(4, this.calculateTotalPrice());
+            statement.setTimestamp(5, Timestamp.valueOf(this.orderDate));
+
+            statement.executeUpdate();
+            System.out.println("✅ Order enregistrée dans PostgreSQL");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // =======================
+    // GETTERS & SETTERS
+    // =======================
     public String getId() {
         return id;
     }
@@ -65,6 +102,9 @@ public class Order {
         this.status = status;
     }
 
+    // =======================
+    // EQUALS / HASHCODE
+    // =======================
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -78,10 +118,16 @@ public class Order {
         return Objects.hash(id);
     }
 
+    // =======================
+    // TO STRING
+    // =======================
     @Override
     public String toString() {
-        return "Order{id='" + id + "', status=" + status +
+        return "Order{" +
+                "id='" + id + '\'' +
+                ", status=" + status +
                 ", customer=" + customer.getName() +
-                ", date=" + orderDate + "}";
+                ", orderDate=" + orderDate +
+                '}';
     }
 }
