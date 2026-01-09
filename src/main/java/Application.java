@@ -14,9 +14,6 @@ public class Application {
 
         DeliveryPlatform platform = new DeliveryPlatform();
 
-        // =========================
-        // CLIENT + COMMANDE SIMPLE
-        // =========================
         Customer c1 = new Customer("C001", "Alice Dupont", "12 Rue de Java");
 
         Dish d1 = new Dish("Pizza Reine", new BigDecimal("12.50"), DishSize.MEDIUM);
@@ -26,7 +23,6 @@ public class Application {
         order1.addDish(d1, 2);
         order1.addDish(d2, 1);
 
-        // ✅ UNE SEULE FOIS (préparation + sauvegarde DB)
         platform.placeOrder(order1);
 
         System.out.println("Prix total : " + order1.calculateTotalPrice() + " €");
@@ -39,9 +35,6 @@ public class Application {
         System.out.println("----------------------------------------");
         System.out.println("Simulation multi-threads");
 
-        // =========================
-        // MULTI-THREADS
-        // =========================
         ExecutorService executor = Executors.newFixedThreadPool(3);
 
         for (int i = 1; i <= 3; i++) {
@@ -57,7 +50,6 @@ public class Application {
                         1
                 );
 
-                // ✅ Sauvegarde faite DANS DeliveryPlatform
                 platform.placeOrder(order);
             });
         }

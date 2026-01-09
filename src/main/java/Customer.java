@@ -7,7 +7,6 @@ public class Customer {
     private String name;
     private String address;
 
-    // On enlève email et telephone car NON utilisés dans ton projet actuel
 
     public Customer(String id, String name, String address) {
         this.id = id;

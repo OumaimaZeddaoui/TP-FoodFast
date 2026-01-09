@@ -48,9 +48,6 @@ public class Order {
         return total;
     }
 
-    // =======================
-    // BONUS – SAUVEGARDE DB
-    // =======================
     public void saveToDatabase() {
 
         String sql = """
@@ -75,9 +72,6 @@ public class Order {
         }
     }
 
-    // =======================
-    // GETTERS & SETTERS
-    // =======================
     public String getId() {
         return id;
     }
@@ -102,9 +96,6 @@ public class Order {
         this.status = status;
     }
 
-    // =======================
-    // EQUALS / HASHCODE
-    // =======================
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -118,9 +109,7 @@ public class Order {
         return Objects.hash(id);
     }
 
-    // =======================
-    // TO STRING
-    // =======================
+
     @Override
     public String toString() {
         return "Order{" +
